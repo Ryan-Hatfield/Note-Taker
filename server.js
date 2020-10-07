@@ -30,3 +30,17 @@ app.get("/notes", function(req, res) {
 app.get("/api/notes", function(req, res) {
     res.sendFile(path.join(__dirname, "db/db.json"));
 });
+//--Post a new note into the db.json with an id.
+app.post("/api/notes", function(req, res) {
+        let notes = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
+        let noteRequest = req.body;
+        let newNoteId = notes.length + 1;
+        let newNote = {
+            id: newNoteId,
+            title: noteRequest.title,
+            text: noteRequest.text
+        };
+        notes.push(newNote);
+        res.json(newNote);
+        fs.writeFileSync("db/db.json", JSON.stringify(notes));
+});

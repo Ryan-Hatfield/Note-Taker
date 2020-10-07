@@ -30,7 +30,7 @@ app.get("/notes", function(req, res) {
 app.get("/api/notes", function(req, res) {
     res.sendFile(path.join(__dirname, "db/db.json"));
 });
-//--Post a new note into the db.json with an id.
+//---Post a new note into the db.json with an id.
 app.post("/api/notes", function(req, res) {
         let notes = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
         let noteRequest = req.body;
@@ -43,4 +43,18 @@ app.post("/api/notes", function(req, res) {
         notes.push(newNote);
         res.json(newNote);
         fs.writeFileSync("db/db.json", JSON.stringify(notes));
+});
+//---Delete a note out of the db.json
+app.delete("/api/notes/:id", (req, res) => {
+    const deleteId = req.params.id;
+        let notes = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
+        if (deleteId <= notes.length) {
+            res.json(notes.splice(deleteId-1,1));
+            for (let i=0; i<notes.length; i++) {
+                notes[i].id = i+1;
+            }
+            fs.writeFileSync("db/db.json", JSON.stringify(notes));
+        } else {
+            res.json(false);
+        }
 });
